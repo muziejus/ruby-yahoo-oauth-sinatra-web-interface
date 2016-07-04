@@ -1,0 +1,17 @@
+<h1>Let’s authenticate!</h1>
+<h2>First, get the access code</h2>
+<p>We’ve found your yahoo client id. The button below will open a new page where you will get your access code.</p>
+<p>
+  <a target="_blank" class="btn btn-primary btn-lg" href="<%= yahoo_url %>" role="button">
+    Go to Yahoo! »
+  </a>
+</p>
+<h2>Next, enter the access code to get the token</h2>
+<p>Type in the short code you received from Yahoo! below:</p>
+<form action="/get-token" method="POST">
+  <div class="form-group">
+    <label for="code">Code</label>
+    <input type="text" class="form-control" id="code" name="code" placeholder="abcd1234">
+  </div>
+  <button type="submit" class="btn btn-primary btn-lg">Get access token</button>
+</form>

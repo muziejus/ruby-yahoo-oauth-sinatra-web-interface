@@ -24,9 +24,35 @@ class App < Sinatra::Base
 
   get "/authenticate" do
     if settings.yahoo_client_id.nil?
-      "ENV['YAHOO_CLIENT_ID' is nil."
+      erb :unconfigured
     else
-      "The id is: #{settings.yahoo_client_id}"
+      yahoo_url = "https://api.login.yahoo.com/oauth2/request_auth?" +
+        "client_id=#{settings.yahoo_client_id}&" +
+        "redirect_uri=oob&" + # Out of bounds
+        "response_type=code&" +
+        "language=en-us"
+      erb :authenticate, locals: { 
+        yahoo_url: yahoo_url
+      }
+    end
+  end
+
+  post "/get-token" do
+    if params[:code].nil?
+      "No code entered!"
+    else
+      response = HTTParty.post("https://api.login.yahoo.com/oauth2/get_token",
+        {
+          body: {
+            "client_id" => settings.yahoo_client_id,
+            "client_secret" => settings.yahoo_client_secret,
+            "redirect_uri" => "oob",
+            "code" => params[:code],
+            "grant_type" => "authorization_code"
+          }
+        }
+      )
+      response.body
     end
   end
 
