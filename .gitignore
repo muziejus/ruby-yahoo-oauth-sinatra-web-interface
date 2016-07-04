@@ -17,6 +17,9 @@
 puma.rb
 puma.pid
 
+# Ignore yahoo access token file.
+yahoo.yml
+
 ## Specific to RubyMotion:
 .dat*
 .repl_history
