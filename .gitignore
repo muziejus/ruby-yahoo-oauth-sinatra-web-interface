@@ -13,8 +13,9 @@
 # Used by dotenv library to load environment variables.
 .env
 
-# Ignore puma.rb
+# Ignore puma files
 puma.rb
+puma.pid
 
 ## Specific to RubyMotion:
 .dat*
