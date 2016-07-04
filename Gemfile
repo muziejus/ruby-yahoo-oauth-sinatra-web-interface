@@ -13,3 +13,6 @@ gem "httparty"
 
 # The webserver.
 gem "puma"
+
+# The templating language
+gem "haml"
