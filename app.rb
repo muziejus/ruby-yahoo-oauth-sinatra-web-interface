@@ -19,7 +19,6 @@ class App < Sinatra::Base
   set :erb, layout_engine: :haml, layout: :layout
 
   get "/" do
-    "welcome… contents of README... you want to go to #{request.host_with_port}/authenticate."
     erb :index
   end
 
