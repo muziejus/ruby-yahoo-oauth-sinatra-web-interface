@@ -6,7 +6,7 @@ threads threads_count, threads_count
 
 preload_app!
 
+port ENV['PORT'] || 4567
 environment ENV['RACK_ENV'] || 'development'
 
-rackup "config.ru"
-
+rackup DefaultRackup
