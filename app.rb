@@ -53,14 +53,8 @@ class App < Sinatra::Base
         }
       )
       if response.parsed_response["error"].nil?
-        if App.development?
-          File.open('yahoo.yml', 'w') do |file|
-            file.puts YAML::dump(response.parsed_response)
-          end
-        else # dump to Heroku environment variables.
-          ENV['ACCESS_TOKEN'] = response.parsed_response['access_token']
-          ENV['REFRESH_TOKEN'] = response.parsed_response['refresh_token']
-          ENV['XOAUTH_YAHOO_GUID'] = response.parsed_response['xoauth_yahoo_guid']
+        File.open('yahoo.yml', 'w') do |file|
+          file.puts YAML::dump(response.parsed_response)
         end
         redirect '/test-api'
       else
@@ -78,8 +72,6 @@ class App < Sinatra::Base
   def access_token
     if File.exists? 'yahoo.yml'
       YAML::load_file('yahoo.yml')['access_token']
-    elsif ENV['ACCESS_TOKEN']
-      ENV['ACCESS_TOKEN']
     else
       raise "No access token found."
     end
@@ -88,8 +80,6 @@ class App < Sinatra::Base
   def xoauth_yahoo_guid
     if File.exists? 'yahoo.yml'
       YAML::load_file('yahoo.yml')['xoauth_yahoo_guid']
-    elsif ENV['XOAUTH_YAHOO_GUID']
-      ENV['XOAUTH_YAHOO_GUID']
     else
       raise "No yahoo guid found."
     end
