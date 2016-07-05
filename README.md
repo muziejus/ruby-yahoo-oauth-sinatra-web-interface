@@ -28,3 +28,31 @@ Secret` are required to generate an access token.
 3. The user is then taken back to this app, where, having entered the code, a `POST` request is made to [https://api.login.yahoo.com/oauth2/get_token](https://api.login.yahoo.com/oauth2/get_token). 
 
 4. The subsequent response, containing the access token, is saved for future use, and now queries can be made to the Yahoo! API using the header `Authorization: Bearer access_tokenssjkjs823n24`
+
+The app does this by running the route `/test-api`, which should show the user’s profile.
+
+## Installation
+
+1. Clone the repo.
+
+2. `bundle install` to install the gems.
+
+3. `cp .env.example .env` to create the `.env` file that holds the Yahoo! `client_id` and `client_secret` variables, which you have to add manually.
+
+4. `cp puma.example.rb puma.rb`
+
+5. `pumactl -F puma.rb start`
+
+6. Point your browser to `http://localhost:9393/` and party.
+
+7. Stop the webserver with `pumactl stop`.
+
+## Todo
+
+This is more a proof of concept than anything else, and I plan on forking this to write a Slack bot that access my fantasy baseball league, but there is one todo, for now:
+
+* Add a means by which a token is refreshed if the access token has expired.
+
+## Heroku installation
+
+This works out of the box on Heroku, but you have to set the config vars with your Yahoo! `client_id` and `client_secret`. Because the access token is stored in a file that isn’t in git (`yahoo.yml`), every time you redeploy the app, you have to get a new access token. This is clumsy, but is also part of why deploying it on Heroku isn’t a brilliant idea.
