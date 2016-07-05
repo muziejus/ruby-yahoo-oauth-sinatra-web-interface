@@ -53,7 +53,7 @@ class App < Sinatra::Base
         }
       )
       if response.parsed_response["error"].nil?
-        if Sinatra::Base.development?
+        if App.development?
           File.open('yahoo.yml', 'w') do |file|
             file.puts YAML::dump(response.parsed_response)
           end
