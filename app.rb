@@ -53,8 +53,14 @@ class App < Sinatra::Base
         }
       )
       if response.parsed_response["error"].nil?
-        File.open('yahoo.yml', 'w') do |file|
-          file.puts YAML::dump(response.parsed_response)
+        if Sinatra::Base.development?
+          File.open('yahoo.yml', 'w') do |file|
+            file.puts YAML::dump(response.parsed_response)
+          end
+        else # dump to Heroku environment variables.
+          ENV['ACCESS_TOKEN'] = response.parsed_response['access_token']
+          ENV['REFRESH_TOKEN'] = response.parsed_response['refresh_token']
+          ENV['XOAUTH_YAHOO_GUID'] = response.parsed_response['xoauth_yahoo_guid']
         end
         redirect '/test-api'
       else
@@ -64,15 +70,28 @@ class App < Sinatra::Base
   end
 
   get '/test-api' do
+    response = HTTParty.get "https://social.yahooapis.com/v1/user/#{xoauth_yahoo_guid}/profile?format=json",
+      headers: { "Authorization" => "Bearer #{access_token}" }
+    erb :test_api, locals: { profile: response.parsed_response["profile"] }
+  end
+
+  def access_token
     if File.exists? 'yahoo.yml'
-      yahoo_configs = YAML::load_file 'yahoo.yml'
-      response = HTTParty.get("https://social.yahooapis.com/v1/user/#{yahoo_configs['xoauth_yahoo_guid']}/profile?format=json",
-        headers: { "Authorization" => "Bearer #{yahoo_configs['access_token']}" }
-      )
-      erb :test_api, locals: { profile: response.parsed_response["profile"] }
+      YAML::load_file('yahoo.yml')['access_token']
+    elsif ENV['ACCESS_TOKEN']
+      ENV['ACCESS_TOKEN']
     else
-      "Can’t find the access token"
+      raise "No access token found."
     end
   end
 
+  def xoauth_yahoo_guid
+    if File.exists? 'yahoo.yml'
+      YAML::load_file('yahoo.yml')['xoauth_yahoo_guid']
+    elsif ENV['XOAUTH_YAHOO_GUID']
+      ENV['XOAUTH_YAHOO_GUID']
+    else
+      raise "No yahoo guid found."
+    end
+  end
 end
